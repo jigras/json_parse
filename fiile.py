@@ -32,10 +32,18 @@ def save_to_csv(flat_data, filename):
         writer = csv.writer(csvfile)
         writer.writerow(['Key', 'Value'])
         for key, values in flat_data.items():
-            for sub_key, sub_values in values.items():
-                for value in sub_values:
-                    print(f"  Writing: {key}.{sub_key} = {value}")  # Debugging line
-                    writer.writerow([f'{key}.{sub_key}', value])
+            print(f"  Processing field: {key}")  # Debugging line
+            if isinstance(values, dict):
+                for sub_key, sub_values in values.items():
+                    print(f"    Sub-key: {sub_key}")  # Debugging line
+                    if isinstance(sub_values, list):
+                        for value in sub_values:
+                            print(f"      Writing: {key}.{sub_key} = {value}")  # Debugging line
+                            writer.writerow([f'{key}.{sub_key}', value])
+                    else:
+                        print(f"    Unexpected format for sub-values: {sub_values}")
+            else:
+                print(f"  Unexpected format for values: {values}")
 
 # Przetwórz dane i zapisz do plików CSV
 flat_data = flatten_data_for_all_keys(data)
