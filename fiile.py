@@ -6,7 +6,7 @@ def flatten_data_for_all_keys(data):
             field_name = field[0]
             field_data = field[1]
             
-            if 'item' in field_data:
+            if 'item' in field_data and field_data['item']:
                 item = field_data['item'][0]
                 
                 # Dodaj raw value
@@ -33,6 +33,7 @@ def save_to_csv(flat_data, filename):
 # Przetwórz dane i zapisz do plików CSV
 flat_data = flatten_data_for_all_keys(data)
 
+# Zapisywanie danych do plików CSV
 for field_name, data_dict in flat_data.items():
     filename = f'{field_name}.csv'
     save_to_csv(data_dict, filename)
