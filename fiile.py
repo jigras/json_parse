@@ -3,8 +3,8 @@ def flatten_for_key(nested_json, target_key='50k', parent_key='', sep='.'):
     
     if isinstance(nested_json, list):
         for element in nested_json:
-            if isinstance(element, list):
-                key, value = element[0], element[1]
+            if isinstance(element, list) and len(element) == 2:
+                key, value = element
                 if key == target_key:
                     new_key = f"{parent_key}{sep}{target_key}" if parent_key else target_key
                     items.extend(flatten_json(value, new_key, sep=sep).items())
