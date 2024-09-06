@@ -10,40 +10,42 @@ def flatten_data_for_all_keys(data):
             
             if 'item' in field_data and field_data['item']:
                 item = field_data['item'][0]
-                print(f"    Raw: {item.get('raw', 'No raw value')}")
-                result[field_name]['item.raw'].append(item.get('raw', 'No raw value'))
+                result[field_name]['item.raw'].append(item.get('raw', ''))
                 
                 if 'component' in item:
                     for comp in item['component']:
                         if len(comp) == 2:  # Ensure each component has exactly 2 elements
                             comp_name, comp_value = comp
                             result[field_name][f'item.component.{comp_name}'].append(comp_value)
-                        else:
-                            print(f"    Invalid component format: {comp}")
-            else:
-                print(f"  No 'item' key or 'item' is empty for field: {field_name}")
     
     return result
 
-# Funkcja do zapisywania danych do pliku CSV
+# Funkcja do zapisywania danych do pliku CSV w formacie tabelarycznym
 def save_to_csv(flat_data, filename):
     print(f"Saving to {filename}")  # Debugging line
+    
+    # Kolekcjonowanie nagłówków i wartości
+    headers = set()
+    rows = defaultdict(list)
+    
+    for field_name, fields in flat_data.items():
+        for sub_key, values in fields.items():
+            headers.add(sub_key)
+            for i, value in enumerate(values):
+                rows[i].append(value)
+    
+    # Sortowanie nagłówków
+    headers = sorted(headers)
+    
     with open(filename, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['Key', 'Value'])
-        for key, values in flat_data.items():
-            print(f"  Processing field: {key}")  # Debugging line
-            if isinstance(values, dict):
-                for sub_key, sub_values in values.items():
-                    print(f"    Sub-key: {sub_key}")  # Debugging line
-                    if isinstance(sub_values, list):
-                        for value in sub_values:
-                            print(f"      Writing: {key}.{sub_key} = {value}")  # Debugging line
-                            writer.writerow([f'{key}.{sub_key}', value])
-                    else:
-                        print(f"    Unexpected format for sub-values: {sub_values}")
-            else:
-                print(f"  Unexpected format for values: {values}")
+        
+        # Zapis nagłówków
+        writer.writerow(headers)
+        
+        # Zapis wartości wierszy
+        for i in range(len(rows)):
+            writer.writerow(rows[i])
 
 # Przetwórz dane i zapisz do plików CSV
 flat_data = flatten_data_for_all_keys(data)
