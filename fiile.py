@@ -32,6 +32,6 @@ def flatten_json(nested_json, parent_key='', sep='.'):
     
     return dict(items)
 
-flattened_result = flatten_for_key(data[0]["field"], target_key='50k')
+flattened_result = flatten_for_key(data["0"]["field"], target_key='50k')
 
 print(flattened_result)
