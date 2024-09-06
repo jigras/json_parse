@@ -19,10 +19,14 @@ def flatten_json(nested_json, parent_key='', sep='.'):
             new_key = f"{parent_key}{sep}{k}" if parent_key else k
             if isinstance(v, dict):
                 items.extend(flatten_json(v, new_key, sep=sep).items())
-            elif isinstance(v, list) and all(isinstance(i, list) for i in v):
-                for comp in v:
-                    comp_key = f"{new_key}.component.{comp[0]}"
-                    items.append((comp_key, comp[1]))
+            elif isinstance(v, list):
+                if all(isinstance(i, dict) for i in v):
+                    for item in v:
+                        items.extend(flatten_json(item, new_key, sep=sep).items())
+                elif all(isinstance(i, list) for i in v):
+                    for comp in v:
+                        comp_key = f"{new_key}.component.{comp[0]}"
+                        items.append((comp_key, comp[1]))
             else:
                 items.append((new_key, v))
     
